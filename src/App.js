@@ -1,54 +1,52 @@
-import { useState } from "react";
-import "./styles.css";
-import TaskForm from "./TaskForm";
-import TasksHeader from "./TasksHeader";
-import TasksList from "./TasksList";
-
+import React, { useEffect, useState } from "react";
+const getLocal=()=>{
+  let carts=localStorage.getItem("carts");
+  if (carts) {
+    return(carts=JSON.parse(localStorage.getItem("carts")))
+    
+  }
+  else{
+    return[];
+  }
+}
 export default function App() {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Faire les courses", done: false },
-    { id: 2, text: "Ménage !", done: true },
-  ]);
+  const [nom, setNom]=useState('');
+  const [qte, setQte]=useState('');
+  const [cartes,setCarts]=useState(getLocal());
+  console.log(cartes);
 
-  const addTask = (text) => {
-    const newTask = {
-      text,
-      id: Date.now(),
-      done: false,
-    };
+  const handlerSubmit=(e)=>{
+    e.preventDefault();
+    alert(qte)
+    const data={
+      nom:nom,
+      prenom:qte
+    }   
+   
+    setCarts([...cartes, data])  
 
-    setTasks([...tasks, newTask]);
-  };
-
-  const deleteTask = (id) => {
-    const filteredTasks = tasks.filter((t) => t.id !== id);
-    setTasks(filteredTasks);
-  };
-
-  const toggleTask = (id) => {
-    const realTask = tasks.find((t) => t.id === id);
-    const index = tasks.findIndex((t) => t.id === id);
-    const taskCopy = { ...realTask };
-    const tasksListCopy = [...tasks];
-
-    taskCopy.done = !taskCopy.done;
-    tasksListCopy[index] = taskCopy;
-    setTasks(tasksListCopy);
-  };
-
+  }
+  useEffect(()=>{
+    localStorage.setItem("carts",JSON.stringify(cartes));
+  },[cartes])
   return (
     <div className="container">
-      <article>
-        <TasksHeader tasks={tasks} />
-        <TasksList
-          tasks={tasks}
-          toggleTask={toggleTask}
-          deleteTask={deleteTask}
-        />
-        <footer>
-          <TaskForm addTask={addTask} />
-        </footer>
-      </article>
+        <form action="" onSubmit={handlerSubmit}>
+          <input type="text" value={nom} onChange={(e)=>setNom(e.target.value)}/>
+          <input type="text" value={qte} onChange={(e)=>setQte(e.target.value)}/>
+          <button type="Submit">Submit</button>
+        </form>
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Qte</th>
+            </tr>
+          </thead>
+          <tbody>
+           
+          </tbody>
+        </table>
     </div>
   );
 }
